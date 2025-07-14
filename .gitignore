@@ -1,0 +1,35 @@
+# Dossiers générés par Composer
+/vendor/
+/composer.lock
+
+# Fichiers de configuration sensibles (si vous en aviez des copies locales)
+# config/database.php # Décommentez si vous gérez des versions différentes
+                     # pour la production et le développement et ne voulez pas
+                     # commettre vos identifiants locaux.
+                     # Dans ce projet, il est supposé que vous modifiez ce fichier
+                     # pour votre environnement spécifique.
+
+# Fichiers de journalisation
+/logs/*.log
+!.gitignore # Garde le .gitignore dans le dossier logs s'il y en a un
+
+# Fichiers d'environnement (si vous utilisez .env pour les variables)
+.env
+.env.*
+
+# Fichiers temporaires ou spécifiques à l'OS
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*~
+.idea/      # Dossier de configuration PHPStorm/IntelliJ
+.vscode/    # Dossier de configuration VS Code
+
+# Fichiers de cache (si un framework ou une librairie en génère)
+/cache/
+/tmp/
+
+# Fichiers de dump de base de données ou de sauvegardes
+*.sql.zip
+*.sql

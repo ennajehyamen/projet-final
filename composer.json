@@ -1,0 +1,28 @@
+{
+    "name": "example/package",
+    "description": "An example package for demonstration purposes.",
+    "type": "library",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "monolog/monolog": "^2.0",
+        "firebase/php-jwt": "^6.11"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Example\\Package\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Example\\Package\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
