@@ -79,8 +79,8 @@ Suivez ces étapes pour configurer et exécuter le projet localement :
 
 1.  **Cloner le dépôt** (ou télécharger les fichiers) :
     ```bash
-    git clone [https://github.com/votre_utilisateur/votre_projet.git](https://github.com/votre_utilisateur/votre_projet.git)
-    cd votre_projet
+    git clone [https://github.com/ennajehyamen/projet-final.git](https://github.com/ennajehyamen/projet-final.git)
+    cd projet-final
     ```
     *(Si vous avez simplement copié/collé les fichiers, placez-vous dans le répertoire racine du projet.)*
 
@@ -242,7 +242,7 @@ L'URL de base de votre API sera probablement `http://localhost/votre_dossier_pro
 │   │   ├── JWTHelper.php
 │   │   └── Logger.php
 │   ├── Routes/
-│   │   └── api.php           # Définition des routes de l'API
+│   │   └── Router.php           # Définition des routes de l'API
 ├── logs/
 │   └── error.log             # Fichier de journalisation des erreurs serveur
 

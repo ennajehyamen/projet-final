@@ -31,5 +31,30 @@ class User {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Ajoutez d'autres méthodes pour la mise à jour et la suppression si nécessaire
+    public function update($id, $name, $email, $role) {
+        $query = "UPDATE " . $this->table_name . " SET name = ?, email = ?, role = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$name, $email, $role, $id]);
+    }
+
+    public function delete($id) {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$id]);
+    }
+
+    public function getAllUsers() {
+        $query = "SELECT id, name, email, role, creation_date FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUserAfterLogin($id, $token) {
+        $query = "UPDATE " . $this->table_name . " SET last_login_date = NOW() , token = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $res = $stmt->execute([$token, $id]);
+        //$stmt->debugDumpParams();
+        return $res;
+    }
 }

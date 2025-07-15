@@ -24,16 +24,29 @@ class Product {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function create($name, $description, $price, $stock_quantity) {
-        $query = "INSERT INTO " . $this->table_name . " (name, description, price, stock_quantity) VALUES (?, ?, ?, ?)";
+    public function create($title, $description, $price, $stock, $image_url = null, $category_id = null) {
+        $query = "INSERT INTO " . $this->table_name . " (title, description, price, stock, image_url, category_id) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$name, $description, $price, $stock_quantity]);
+        $stmt->execute([$title, $description, $price, $stock, $image_url, $category_id]);
+        //$stmt->debugDumpParams();
+        return;
     }
 
-    public function update($id, $name, $description, $price, $stock_quantity) {
-        $query = "UPDATE " . $this->table_name . " SET name = ?, description = ?, price = ?, stock_quantity = ? WHERE id = ?";
+    public function update($id, $data) {
+        $product = $this->getById($id);
+        //var_dump($data);
+        $title = (!isset($data->title)) ? $product['title'] : $data->title;
+        $description = (!isset($data->description)) ? $product['description'] : $data->description;
+        $price = (!isset($data->price)) ? $product['price'] : $data->price;
+        $stock = (!isset($data->stock)) ? $product['stock'] : $data->stock;
+        $image_url = (!isset($data->image_url)) ? $product['image_url'] : $data->image_url;
+        $category_id = (!isset($data->category_id)) ? $product['category_id'] : $data->category_id;
+
+        $query = "UPDATE " . $this->table_name . " SET title = ?, description = ?, price = ?, stock = ? , image_url = ? , category_id = ? WHERE id = ?";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$name, $description, $price, $stock_quantity, $id]);
+        $stmt->execute([$title, $description, $price, $stock, $image_url, $category_id, $id]);
+        //$stmt->debugDumpParams();
+        return $stmt->rowCount() > 0; // Return true if the update was successful
     }
 
     public function delete($id) {

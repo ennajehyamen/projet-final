@@ -49,6 +49,14 @@ class AuthController {
 
         if ($user && password_verify($data->password, $user['password_hash'])) {
             $token = JWTHelper::generateToken($user['id'], $user['email'], $user['role']);
+            $login = $this->userModel->updateUserAfterLogin($user['id'], $token);
+           
+            if (!$login) {
+                http_response_code(500);
+                echo json_encode(["message" => "Unable to update user login information."]);
+                Logger::logError("Failed to update login for user ID: " . $user['id']);
+                return;
+            }
             http_response_code(200);
             echo json_encode(["message" => "Login successful.", "token" => $token, "user" => ["id" => $user['id'], "email" => $user['email'], "role" => $user['role']]]);
         } else {
@@ -58,9 +66,7 @@ class AuthController {
     }
 
     public function getMe() {
-        $userData = JWTHelper::requireAuth('user'); // Peut être 'admin' si on veut que seuls les admins voient leur propre profil
-        // JWTHelper::requireAuth() est suffisant ici car l'utilisateur doit être connecté.
-        // La validation est déjà faite par le middleware implicite de requireAuth.
+        $userData = JWTHelper::requireAuth('user'); 
 
         $user = $this->userModel->findById($userData->userId);
 
@@ -71,6 +77,26 @@ class AuthController {
             http_response_code(404);
             echo json_encode(["message" => "User not found."]);
             Logger::logError("User ID " . $userData->userId . " not found during getMe.");
+        }
+    }
+
+    public function updateProfile() {
+        $userData = JWTHelper::requireAuth('user');
+        $data = json_decode(file_get_contents("php://input"));
+
+        if (!isset($data->name) || !isset($data->email)) {
+            http_response_code(400);
+            echo json_encode(["message" => "Missing required fields."]);
+            return;
+        }
+
+        if ($this->userModel->update($userData->userId, $data->name, $data->email, $data->role ?? 'user')) {
+            http_response_code(200);
+            echo json_encode(["message" => "Profile updated successfully."]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "Unable to update profile."]);
+            Logger::logError("Failed to update profile for user ID: " . $userData->userId);
         }
     }
 }

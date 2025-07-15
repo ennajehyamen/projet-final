@@ -40,4 +40,4 @@ set_error_handler(function ($severity, $message, $file, $line) {
     }
 });
 
-require_once __DIR__ . '/src/Routes/api.php';
+require_once __DIR__ . '/src/Routes/Router.php';

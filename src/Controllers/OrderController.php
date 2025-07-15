@@ -60,7 +60,51 @@ class OrderController {
             echo json_encode(["message" => "Order not found or you don't have access to this order."]);
         }
     }
+    public function updateStatus($id) {
+        JWTHelper::requireAuth('admin'); // Requires admin role
+        $data = json_decode(file_get_contents("php://input"));
 
-    // Les méthodes update et delete pour les commandes sont omises pour la simplicité, car elles dépendent de règles métier spécifiques (annulations, retours, etc.).
-    // Elles nécessiteraient des logiques complexes de gestion des statuts de commande et des remboursements/réapprovisionnements.
+        if (!isset($data->status) || !in_array($data->status, ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])) {
+            http_response_code(400);
+            echo json_encode(["message" => "Invalid status."]);
+            return;
+        }
+
+        if ($this->orderModel->updateOrderStatus($id, $data->status)) {
+            http_response_code(200);
+            echo json_encode(["message" => "Order status updated successfully."]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "Unable to update order status."]);
+        }
+    }
+    public function delete($id) {
+        JWTHelper::requireAuth('admin'); // Requires admin role
+        if ($this->orderModel->delete($id)) {
+            http_response_code(200);
+            echo json_encode(["message" => "Order deleted successfully."]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "Unable to delete order."]);
+        }
+    }
+
+    public function getOrderById($id) {
+        $userData = JWTHelper::requireAuth('user'); // Requires user role
+        $order = $this->orderModel->getOrderById($id, $userData->userId);
+
+        if ($order) {
+            http_response_code(200);
+            echo json_encode($order);
+        } else {
+            http_response_code(404);
+            echo json_encode(["message" => "Order not found or you don't have access to this order."]);
+        }
+    }
+    public function getAllOrders() {
+        JWTHelper::requireAuth('admin'); // Requires admin role
+        $orders = $this->orderModel->getAllOrders();
+        http_response_code(200);
+        echo json_encode($orders);
+    }
 }

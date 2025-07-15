@@ -32,19 +32,19 @@ class ProductController {
         JWTHelper::requireAuth('admin'); // Requires admin role
         $data = json_decode(file_get_contents("php://input"));
 
-        if (!isset($data->name) || !isset($data->price) || !isset($data->stock_quantity)) {
+        if (!isset($data->title) || !isset($data->price) || !isset($data->stock)) {
             http_response_code(400);
-            echo json_encode(["message" => "Missing required product fields (name, price, stock_quantity)."]);
+            echo json_encode(["message" => "Missing required product fields (title, price, stock)."]);
             return;
         }
 
-        if ($this->productModel->create($data->name, $data->description ?? null, $data->price, $data->stock_quantity)) {
+        if ($this->productModel->create($data->title, $data->description ?? null, $data->price, $data->stock, $data->image_url ?? null, $data->category_id ?? null)) {
             http_response_code(201);
             echo json_encode(["message" => "Product created successfully."]);
         } else {
             http_response_code(500);
             echo json_encode(["message" => "Unable to create product."]);
-            Logger::logError("Failed to create product: " . $data->name);
+            Logger::logError("Failed to create product: " . $data->title);
         }
     }
 
@@ -52,13 +52,13 @@ class ProductController {
         JWTHelper::requireAuth('admin'); // Requires admin role
         $data = json_decode(file_get_contents("php://input"));
 
-        if (!isset($data->name) || !isset($data->price) || !isset($data->stock_quantity)) {
-            http_response_code(400);
-            echo json_encode(["message" => "Missing required product fields for update."]);
+        if (!$this->productModel->getById($id)) {
+            http_response_code(404);
+            echo json_encode(["message" => "Product not found."]);
             return;
         }
 
-        if ($this->productModel->update($id, $data->name, $data->description ?? null, $data->price, $data->stock_quantity)) {
+        if ($this->productModel->update($id, $data)) {
             http_response_code(200);
             echo json_encode(["message" => "Product updated successfully."]);
         } else {
